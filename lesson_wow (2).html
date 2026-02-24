@@ -1,0 +1,1711 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Комплексный урок • 3 четверть • 2 класс</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+    :root {
+      --mc-dirt: #866043;
+      --mc-grass: #5d9c3a;
+      --mc-stone: #8a8a8a;
+      --mc-wood: #a07840;
+      --mc-gold: #fcdb58;
+      --mc-diamond: #5decf5;
+      --mc-emerald: #17dd62;
+      --mc-red: #c0392b;
+      --mc-dark: #1a1a1a;
+      --mc-light: #f0f0f0;
+      --mc-parchment: #fffbdc;
+      --mc-brown-dark: #3d2b1a;
+      --mc-ui-bg: rgba(0,0,0,0.75);
+      --font: 'Press Start 2P', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; image-rendering: pixelated; }
+
+    html, body {
+      width: 100%; height: 100%;
+      font-family: var(--font);
+      background: #000;
+      overflow-x: hidden;
+    }
+
+    /* ===== PIXEL BORDER MIXIN via box-shadow ===== */
+    .mc-border {
+      border: 4px solid #000;
+      box-shadow:
+        inset -4px -4px 0 rgba(0,0,0,0.5),
+        inset 4px 4px 0 rgba(255,255,255,0.3);
+    }
+
+    /* ===== START SCREEN ===== */
+    .start-screen {
+      position: relative;
+      width: 100%; min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      background: url("https://i.postimg.cc/Hk9WMvqZ/Chat_GPT_Image_22_февр_2026_г_14_58_03.png") center/cover no-repeat fixed;
+      padding: 24px;
+    }
+
+    /* Pixel overlay on background */
+    .start-screen::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 0;
+    }
+
+    .start-overlay {
+      position: relative; z-index: 1;
+      background: var(--mc-ui-bg);
+      border: 4px solid #555;
+      box-shadow:
+        inset -4px -4px 0 rgba(0,0,0,0.7),
+        inset 4px 4px 0 rgba(255,255,255,0.15),
+        0 0 0 4px #222;
+      padding: 32px 28px;
+      max-width: 480px; width: 100%;
+      text-align: center;
+    }
+
+    .start-badge {
+      display: inline-block;
+      background: var(--mc-grass);
+      color: #fff;
+      font-size: 9px;
+      padding: 6px 12px;
+      border: 3px solid #000;
+      box-shadow: inset -2px -2px 0 rgba(0,0,0,0.4), inset 2px 2px 0 rgba(255,255,255,0.25);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+
+    .start-title {
+      font-size: clamp(14px, 3vw, 18px);
+      color: var(--mc-gold);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      line-height: 1.6;
+      margin-bottom: 10px;
+      text-shadow: 3px 3px 0 #7a5a00, -1px -1px 0 #000;
+    }
+
+    .start-subtitle {
+      font-size: 9px;
+      color: var(--mc-diamond);
+      line-height: 1.8;
+      margin-bottom: 26px;
+      text-shadow: 2px 2px 0 #000;
+    }
+
+    .start-button {
+      display: inline-block;
+      background: #f5c800;
+      color: #3a1800;
+      font-family: var(--font);
+      font-size: 12px;
+      padding: 14px 28px;
+      border: none; cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border: 4px solid #7a3d00;
+      box-shadow:
+        inset -4px -4px 0 rgba(120,60,0,0.4),
+        inset 4px 4px 0 rgba(255,255,200,0.5);
+      transition: background 0.1s, transform 0.1s;
+      width: 100%; max-width: 260px;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.4);
+    }
+    .start-button:hover { background: #ffd500; }
+    .start-button:active { transform: scale(0.97); box-shadow: inset -2px -2px 0 rgba(120,60,0,0.4), inset 2px 2px 0 rgba(255,255,200,0.3); }
+
+    .start-footer {
+      margin-top: 18px;
+      font-size: 7px;
+      color: #aaa;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    /* ===== GAME SCREEN ===== */
+    .game-screen {
+      position: relative;
+      width: 100%; min-height: 100vh;
+      display: none;
+      align-items: center; justify-content: center;
+      background: url("https://i.postimg.cc/Hk9WMvqZ/Chat_GPT_Image_22_февр_2026_г_14_58_03.png") center/cover fixed no-repeat;
+      padding: 12px;
+    }
+    .game-screen::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 0;
+    }
+
+    .game-wrapper {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 1140px;
+      background: rgba(120,70,0,0.80);
+      border: 4px solid #c8860a;
+      box-shadow: inset -4px -4px 0 rgba(0,0,0,0.4), inset 4px 4px 0 rgba(255,220,80,0.15), 0 0 0 4px #7a3d00;
+      display: flex; flex-direction: column;
+      min-height: min(94vh, 740px);
+    }
+
+    /* ===== TOP BAR ===== */
+    .top-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px 8px;
+      border-bottom: 3px solid #c8860a;
+      background: rgba(80,40,0,0.5);
+    }
+    .progress {
+      display: flex; align-items: center; gap: 8px;
+      background: #7a3d00;
+      border: 3px solid #c8860a;
+      box-shadow: inset -2px -2px 0 rgba(0,0,0,0.4), inset 2px 2px 0 rgba(255,220,80,0.2);
+      padding: 5px 12px;
+    }
+    .progress-icon { font-size: 16px; }
+    .progress-text {
+      font-size: 9px;
+      color: #f5c800;
+      text-shadow: 1px 1px 0 #000;
+    }
+    .sound-toggle {
+      background: #c8860a;
+      border: 3px solid #7a3d00;
+      box-shadow: inset -2px -2px 0 rgba(0,0,0,0.3), inset 2px 2px 0 rgba(255,220,80,0.3);
+      width: 40px; height: 40px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      transition: background 0.1s;
+    }
+    .sound-toggle:hover { background: #e8a000; }
+    .sound-toggle:active { transform: scale(0.93); }
+
+    /* ===== GAME FIELD ===== */
+    .game-field {
+      flex: 1;
+      padding: 10px 12px 12px;
+      display: flex; align-items: stretch; justify-content: center;
+    }
+    .image-area {
+      position: relative;
+      flex: 1;
+      overflow: hidden;
+      min-height: 0;
+    }
+    .puzzle-image-wrapper {
+      position: absolute;
+      inset: 0;
+      background: url("https://i.postimg.cc/bvYy9H8Y/20260222_1433_Image_Generation_simple_compose_01kj2hztbafw58r9thqp227gat.png") center/cover no-repeat;
+    }
+    .tiles-grid {
+      position: absolute; inset: 0;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      gap: 0;
+      background: transparent;
+    }
+
+    /* ===== PUZZLE TILE — закрывают картинку, при решении исчезают ===== */
+    .puzzle-tile {
+      position: relative;
+      display: flex; align-items: stretch; justify-content: center;
+      cursor: pointer;
+      background: rgba(255,240,170,0.97);
+      border: 1px solid #c8860a;
+      transition: transform 0.1s ease, opacity 0.5s ease;
+      overflow: hidden;
+    }
+    .puzzle-tile:nth-child(odd) { background: rgba(255,250,195,0.97); }
+    .puzzle-tile:hover:not(.disabled) {
+      transform: scale(1.015);
+      z-index: 5;
+      border-color: #f5a623;
+      box-shadow: 0 0 0 2px #f5a623;
+    }
+
+    /* Убираем все псевдо-knob элементы */
+    .puzzle-tile::before,
+    .puzzle-tile::after { display: none !important; }
+
+    .puzzle-tile-inner {
+      position: relative;
+      width: 100%; height: 100%;
+      padding: 5px 7px 6px;
+      display: flex; flex-direction: column;
+      color: #2a1800;
+      overflow: hidden;
+    }
+
+    .tile-top-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 2px;
+      flex-shrink: 0;
+    }
+    .tile-header {
+      font-size: 7px;
+      color: #8B4513;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      text-shadow: none;
+    }
+    .tile-zoom-btn {
+      border: 2px solid #c8860a;
+      background: #f5d78e;
+      color: #7a3d00;
+      font-size: 11px;
+      width: 22px; height: 22px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: inset -1px -1px 0 rgba(0,0,0,0.2), inset 1px 1px 0 rgba(255,255,255,0.5);
+      transition: background 0.1s;
+      flex-shrink: 0;
+    }
+    .tile-zoom-btn:hover { background: #fce8a0; }
+    .tile-zoom-btn:active { transform: scale(0.9); }
+
+    /* Scrollable content area — кнопка остаётся снаружи */
+    .tile-scroll-area {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      min-height: 0;
+      margin-bottom: 4px;
+    }
+    .tile-scroll-area::-webkit-scrollbar { width: 4px; }
+    .tile-scroll-area::-webkit-scrollbar-thumb { background: #c8860a; border-radius: 2px; }
+
+    .tile-question {
+      font-size: 7px;
+      color: #3a1800;
+      line-height: 1.45;
+      margin-bottom: 3px;
+      white-space: pre-wrap;
+      text-shadow: none;
+    }
+
+    .tile-input {
+      width: 100%;
+      font-family: var(--font);
+      font-size: 8px;
+      padding: 4px 6px;
+      border: 2px solid #c8860a;
+      background: #fffcee;
+      color: #3a1800;
+      outline: none;
+      margin-bottom: 3px;
+      box-shadow: inset 1px 1px 0 rgba(0,0,0,0.1);
+      transition: border-color 0.1s;
+    }
+    .tile-input:focus { border-color: #f5a623; }
+
+    /* ── Кнопка ✓ всегда видна внизу тайла ── */
+    .tile-button {
+      flex-shrink: 0;
+      align-self: flex-end;
+      font-family: var(--font);
+      font-size: 9px;
+      padding: 4px 12px;
+      border: 2px solid #7a3d00;
+      background: #f5a623;
+      color: #fff;
+      cursor: pointer;
+      text-transform: uppercase;
+      box-shadow: inset -1px -2px 0 rgba(0,0,0,0.25), inset 1px 1px 0 rgba(255,255,255,0.4);
+      transition: background 0.1s;
+      margin-top: auto;
+    }
+    .tile-button:hover { background: #e8920f; }
+    .tile-button:active { transform: scale(0.95); }
+
+    /* Examples grid */
+    .examples-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px 4px;
+      margin-bottom: 2px;
+    }
+    .example-row {
+      display: flex; align-items: center; gap: 2px;
+      font-size: 6px; line-height: 1.2;
+    }
+    .example-label {
+      flex-shrink: 0; font-weight: 600;
+      color: #3a1800; white-space: nowrap;
+      font-family: var(--font); font-size: 6px;
+    }
+    .example-input {
+      width: 32px; font-family: var(--font); font-size: 6px;
+      padding: 2px 3px;
+      border: 2px solid #c8860a; background: #fffcee; color: #3a1800;
+      outline: none; text-align: center;
+      box-shadow: inset 1px 1px 0 rgba(0,0,0,0.1);
+      transition: border-color 0.1s;
+    }
+    .example-input:focus { border-color: #f5a623; }
+    .example-input.correct { background: #e6fbe6; border-color: #2a8a2a; color: #1a5a1a; }
+
+    /* Signs grid */
+    .comparisons-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3px 4px;
+      margin-bottom: 2px;
+    }
+    .comparison-row {
+      display: flex; align-items: center; gap: 2px;
+      font-size: 6px; flex-wrap: nowrap;
+    }
+    .comparison-expr {
+      flex-shrink: 0; color: #3a1800;
+      white-space: nowrap; font-size: 6px;
+      font-family: var(--font);
+    }
+    .sign-btn {
+      width: 18px; height: 18px;
+      border: 2px solid #c8860a;
+      background: #fce8a0; color: #3a1800;
+      font-size: 9px; font-weight: 700;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.1s;
+    }
+    .sign-btn:hover { background: #f5d060; }
+    .sign-btn.selected { background: #f5a623; color: #fff; border-color: #7a3d00; }
+    .sign-btn.correct  { background: #2a8a2a; color: #fff; border-color: #1a5a1a; }
+
+    /* Tile states */
+    .puzzle-tile.disabled {
+      cursor: default; pointer-events: none;
+      opacity: 0; transition: opacity 0.5s ease;
+    }
+    .puzzle-tile.flipping { animation: tileFlip 0.42s ease forwards; }
+    @keyframes tileFlip {
+      0%   { transform: rotateY(0deg); }
+      40%  { transform: rotateY(90deg); }
+      100% { transform: rotateY(90deg); opacity: 0; }
+    }
+    .puzzle-tile.wiggle { animation: tileWiggle 0.3s ease; }
+    @keyframes tileWiggle {
+      0%   { transform: translateX(0); }
+      20%  { transform: translateX(-4px); }
+      40%  { transform: translateX(4px); }
+      60%  { transform: translateX(-2px); }
+      80%  { transform: translateX(2px); }
+      100% { transform: translateX(0); }
+    }
+
+    /* ===== OVERLAYS ===== */
+    .overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.75);
+      display: none; align-items: center; justify-content: center;
+      z-index: 80; padding: 16px;
+    }
+    .overlay.visible { display: flex; }
+    .overlay-card {
+      background: #2a1800;
+      border: 4px solid #c8860a;
+      box-shadow: inset -4px -4px 0 rgba(0,0,0,0.5), inset 4px 4px 0 rgba(255,220,80,0.15), 0 0 0 4px #7a3d00;
+      padding: 24px 20px 20px;
+      max-width: 340px; width: 100%;
+      text-align: center;
+    }
+    .overlay-title {
+      font-size: 14px; margin-bottom: 10px;
+      color: #ff4444; text-transform: uppercase;
+      text-shadow: 2px 2px 0 #000;
+    }
+    .overlay-text { font-size: 9px; color: #ddd; margin-bottom: 18px; line-height: 1.7; }
+    .overlay-button {
+      font-family: var(--font); font-size: 10px;
+      padding: 10px 22px;
+      border: 3px solid #7a3d00;
+      background: #f5c800; color: #3a1800;
+      cursor: pointer; text-transform: uppercase;
+      box-shadow: inset -3px -3px 0 rgba(120,60,0,0.3), inset 3px 3px 0 rgba(255,255,200,0.5);
+      transition: background 0.1s;
+    }
+    .overlay-button:hover { background: #ffd500; }
+    .overlay-button:active { transform: scale(0.97); }
+
+    /* Final overlay */
+    .final-overlay {
+      position: fixed; inset: 0;
+      display: none; align-items: center; justify-content: center;
+      backdrop-filter: blur(4px);
+      background: rgba(0,0,0,0.8);
+      z-index: 100; overflow: hidden;
+    }
+    .final-overlay.visible { display: flex; }
+    .final-content {
+      position: relative; z-index: 2;
+      max-width: 460px; width: 100%;
+      padding: 28px 24px 22px;
+      text-align: center;
+      background: #2a1800;
+      border: 4px solid #c8860a;
+      box-shadow: inset -4px -4px 0 rgba(0,0,0,0.5), inset 4px 4px 0 rgba(255,220,80,0.15), 0 0 0 4px #7a3d00, 0 0 40px rgba(200,134,10,0.5);
+      color: var(--mc-light);
+    }
+    .final-title {
+      font-size: 20px; text-transform: uppercase;
+      letter-spacing: 0.1em; margin-bottom: 12px;
+      color: var(--mc-gold);
+      text-shadow: 3px 3px 0 #7a5a00, -1px -1px 0 #000;
+    }
+    .final-subtitle { font-size: 9px; margin-bottom: 20px; line-height: 1.8; color: var(--mc-diamond); text-shadow: 1px 1px 0 #000; }
+    .final-button {
+      font-family: var(--font); font-size: 11px;
+      padding: 12px 26px; border: 3px solid #7a3d00;
+      background: #f5c800; color: #3a1800; cursor: pointer;
+      text-transform: uppercase; letter-spacing: 0.05em;
+      box-shadow: inset -3px -3px 0 rgba(120,60,0,0.3), inset 3px 3px 0 rgba(255,255,200,0.5);
+      transition: background 0.1s;
+    }
+    .final-button:hover { background: #ffd500; }
+    .final-button:active { transform: scale(0.97); }
+
+    /* ===== ZOOM OVERLAY ===== */
+    .zoom-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.8);
+      display: none; align-items: center; justify-content: center;
+      z-index: 90; padding: 16px;
+    }
+    .zoom-overlay.visible { display: flex; }
+    .zoom-card {
+      position: relative;
+      max-width: 580px; width: 100%;
+      background: #2a1800;
+      border: 4px solid #c8860a;
+      box-shadow: inset -4px -4px 0 rgba(0,0,0,0.5), inset 4px 4px 0 rgba(255,220,80,0.15), 0 0 0 4px #7a3d00;
+      padding: 22px 22px 18px;
+      max-height: 92vh; overflow-y: auto;
+      color: #f5e8c0;
+    }
+    .zoom-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 14px; border-bottom: 3px solid #444; padding-bottom: 10px;
+    }
+    .zoom-title {
+      font-size: 10px; color: var(--mc-gold);
+      text-transform: uppercase; letter-spacing: 0.1em;
+      text-shadow: 1px 1px 0 #000;
+    }
+    .zoom-close {
+      border: 2px solid #000; background: #8a3333; color: #fff;
+      font-size: 14px; width: 30px; height: 30px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      box-shadow: inset -2px -2px 0 rgba(0,0,0,0.5), inset 2px 2px 0 rgba(255,255,255,0.2);
+      transition: background 0.1s;
+    }
+    .zoom-close:hover { background: #aa4444; }
+    .zoom-question {
+      font-size: 11px; color: #ddd; line-height: 1.7;
+      white-space: pre-wrap; margin-bottom: 16px;
+      text-shadow: 1px 1px 0 #000;
+    }
+    .zoom-input {
+      width: 100%; font-family: var(--font); font-size: 13px;
+      padding: 10px 14px; border: 3px solid #555;
+      background: #111; color: var(--mc-gold); outline: none;
+      margin-bottom: 14px;
+      box-shadow: inset 2px 2px 0 rgba(0,0,0,0.7);
+      transition: border-color 0.1s;
+    }
+    .zoom-input:focus { border-color: var(--mc-gold); }
+    .zoom-button {
+      font-family: var(--font); font-size: 10px;
+      padding: 10px 24px; border: 3px solid #7a3d00;
+      background: #f5c800; color: #3a1800; cursor: pointer;
+      text-transform: uppercase; letter-spacing: 0.05em;
+      box-shadow: inset -3px -3px 0 rgba(120,60,0,0.3), inset 3px 3px 0 rgba(255,255,200,0.5);
+      transition: background 0.1s;
+    }
+    .zoom-button:hover { background: #ffd500; }
+    .zoom-button:active { transform: scale(0.97); }
+
+    .zoom-examples-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 10px 16px; margin-bottom: 16px;
+    }
+    .zoom-example-row {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 11px; font-family: var(--font); color: #ddd;
+    }
+    .zoom-example-input {
+      width: 60px; font-family: var(--font); font-size: 11px;
+      padding: 6px 8px; border: 2px solid #555;
+      background: #111; color: var(--mc-gold); outline: none;
+      text-align: center; box-shadow: inset 2px 2px 0 rgba(0,0,0,0.7);
+      transition: border-color 0.1s;
+    }
+    .zoom-example-input:focus { border-color: var(--mc-gold); }
+    .zoom-example-input.correct { background: #0d3d1a; border-color: var(--mc-emerald); color: var(--mc-emerald); }
+
+    .zoom-comparisons-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 10px 14px; margin-bottom: 16px;
+    }
+    .zoom-comparison-row {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 9px; font-family: var(--font); color: #ddd;
+      flex-wrap: nowrap;
+    }
+    .zoom-sign-btn {
+      width: 30px; height: 30px;
+      border: 2px solid #555; background: #333; color: #ddd;
+      font-size: 14px; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background 0.1s;
+    }
+    .zoom-sign-btn:hover { background: #555; }
+    .zoom-sign-btn.selected { background: #6060aa; color: #fff; border-color: #8888ff; }
+    .zoom-sign-btn.correct  { background: #1a6a2a; color: var(--mc-emerald); border-color: var(--mc-emerald); }
+
+    /* ===== MINECRAFT PARTICLES (pixel blocks) ===== */
+    .mc-particle {
+      position: fixed; pointer-events: none; z-index: 200;
+      width: 8px; height: 8px;
+      animation: mcParticle var(--dur, 0.7s) ease-out forwards;
+    }
+    @keyframes mcParticle {
+      0%   { transform: translate(0,0) scale(1); opacity: 1; }
+      100% { transform: translate(var(--px), var(--py)) scale(0); opacity: 0; }
+    }
+
+    /* ===== CREEPER EXPLOSION on correct ===== */
+    .mc-boom {
+      position: fixed; pointer-events: none; z-index: 200;
+      font-size: 0px;
+      animation: mcBoom 0.9s ease-out forwards;
+    }
+    @keyframes mcBoom {
+      0%   { font-size: 0; opacity: 1; transform: scale(0); }
+      40%  { font-size: 40px; transform: scale(1.3); opacity: 1; }
+      70%  { font-size: 36px; transform: scale(1); }
+      100% { font-size: 34px; opacity: 0; transform: scale(0.8) translateY(-50px); }
+    }
+
+    /* ===== HEART FIREWORKS (win screen) ===== */
+    .heart-fw {
+      position: absolute; pointer-events: none;
+      font-size: 0px;
+      animation: heartExplode var(--dur,1s) ease-out forwards;
+    }
+    @keyframes heartExplode {
+      0%   { font-size: 0; opacity: 1; transform: translate(0,0); }
+      30%  { font-size: 30px; opacity: 1; }
+      100% { font-size: 20px; opacity: 0; transform: translate(var(--hx),var(--hy)); }
+    }
+
+    /* Rainbow arcs */
+    .rainbow-arc {
+      position: absolute; border-radius: 50%;
+      pointer-events: none; opacity: 0;
+      animation: rainbowPop 2.5s ease-out forwards;
+    }
+    @keyframes rainbowPop {
+      0%   { transform: scale(0); opacity: 0.8; }
+      50%  { transform: scale(1.5); opacity: 0.5; }
+      100% { transform: scale(3); opacity: 0; }
+    }
+
+    /* ===== ПЧЁЛЫ (SVG Minecraft-style) ===== */
+    .butterfly-wrap {
+      position: absolute;
+      pointer-events: none;
+      z-index: 5;
+      will-change: transform;
+    }
+    .butterfly-wrap svg {
+      display: block;
+      overflow: visible;
+    }
+    .bf-wing-l {
+      transform-origin: 16px 16px;
+      animation: flapL 0.2s steps(2, end) infinite alternate;
+    }
+    .bf-wing-r {
+      transform-origin: 16px 16px;
+      animation: flapR 0.2s steps(2, end) infinite alternate;
+    }
+    @keyframes flapL { 0% { transform: scaleY(1); } 100% { transform: scaleY(-0.5); } }
+    @keyframes flapR { 0% { transform: scaleY(1); } 100% { transform: scaleY(-0.5); } }
+
+    /* ===== BOUNCE CARD ===== */
+    @keyframes bounceIn {
+      0%   { transform: scale(0.3) translateY(-100px); opacity: 0; }
+      50%  { transform: scale(1.06) translateY(10px); opacity: 1; }
+      70%  { transform: scale(0.97) translateY(-4px); }
+      85%  { transform: scale(1.02) translateY(2px); }
+      100% { transform: scale(1) translateY(0); opacity: 1; }
+    }
+    .start-overlay { animation: bounceIn 0.8s cubic-bezier(0.36, 0.07, 0.19, 0.97) both; }
+
+    /* ===== ВАУ 1: КНОПКА ИГРАТЬ — живое пульсирование ===== */
+    @keyframes btnGlow {
+      0%, 100% { box-shadow: inset -4px -4px 0 rgba(120,60,0,0.4), inset 4px 4px 0 rgba(255,255,200,0.5), 0 0 8px 2px rgba(245,200,0,0.3); }
+      50%       { box-shadow: inset -4px -4px 0 rgba(120,60,0,0.4), inset 4px 4px 0 rgba(255,255,200,0.5), 0 0 22px 8px rgba(245,200,0,0.6); }
+    }
+    .start-button { animation: btnGlow 1.6s ease-in-out infinite; }
+
+    /* ===== ВАУ 2: СВЕЧЕНИЕ ТАЙЛА при наведении ===== */
+    .puzzle-tile:hover:not(.disabled) {
+      transform: scale(1.015);
+      z-index: 5;
+      border-color: #f5a623;
+      box-shadow: 0 0 0 2px #f5a623, 0 0 20px 6px rgba(245,166,35,0.5), inset 0 0 10px rgba(255,220,80,0.2);
+    }
+
+    /* ===== ВАУ 3: ВСПЫШКА при правильном ответе ===== */
+    .tile-flash {
+      position: absolute; inset: 0; pointer-events: none; z-index: 20;
+      background: radial-gradient(circle, rgba(255,230,80,0.95) 0%, rgba(255,160,0,0.5) 50%, transparent 75%);
+      animation: tileFlash 0.5s ease-out forwards;
+    }
+    @keyframes tileFlash {
+      0%   { opacity: 0; transform: scale(0.2); }
+      35%  { opacity: 1; transform: scale(1.05); }
+      100% { opacity: 0; transform: scale(1.7); }
+    }
+    /* кольцо-пульс вокруг тайла */
+    .tile-ring {
+      position: absolute; inset: -5px; pointer-events: none; z-index: 19;
+      border: 3px solid #f5c800;
+      animation: tileRing 0.55s ease-out forwards;
+    }
+    @keyframes tileRing {
+      0%   { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(1.45); }
+    }
+
+    /* ===== ВАУ 4: ПРОГРЕСС ПОДПРЫГИВАЕТ ===== */
+    .progress-pop {
+      animation: progressPop 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
+    }
+    @keyframes progressPop {
+      0%   { transform: scale(1); }
+      35%  { transform: scale(1.4) rotate(-4deg); }
+      65%  { transform: scale(0.88) rotate(2deg); }
+      100% { transform: scale(1) rotate(0deg); }
+    }
+
+    /* ===== ВАУ 5: КАПЛИ МЁДА сверху ===== */
+    .honey-drip-wrap { display: none; }
+    .honey-drop { display: none; }
+
+    /* ===== ВАУ 6: КОНФЕТТИ на финале ===== */
+    .confetti {
+      position: fixed; pointer-events: none; z-index: 150;
+      width: var(--cw); height: var(--ch);
+      background: var(--cc);
+      border-radius: var(--cr, 2px);
+      top: -20px;
+      animation: confettiFall var(--cd) ease-in var(--cdelay) forwards;
+    }
+    @keyframes confettiFall {
+      0%   { transform: translateY(0) rotate(0deg) translateX(0); opacity: 1; }
+      100% { transform: translateY(105vh) rotate(var(--crot)) translateX(var(--cx)); opacity: 0.1; }
+    }
+
+    /* ===== DRAW AREA (task 5, 9) ===== */
+    .draw-area {
+      width: 100%; background: #fff; border: 2px solid #555;
+      cursor: crosshair; display: block; margin-bottom: 4px;
+      box-shadow: inset 2px 2px 0 rgba(0,0,0,0.4);
+    }
+    .zoom-draw-area {
+      width: 100%; background: #fff; border: 2px solid #555;
+      cursor: crosshair; display: block; margin-bottom: 12px;
+      box-shadow: inset 2px 2px 0 rgba(0,0,0,0.4);
+    }
+    .draw-tools {
+      display: flex; gap: 6px; margin-bottom: 8px; align-items: center;
+    }
+    .draw-tool-btn {
+      font-family: var(--font); font-size: 7px; padding: 4px 8px;
+      border: 2px solid #c8860a; background: #f5d78e; color: #3a1800;
+      cursor: pointer;
+      box-shadow: inset -1px -1px 0 rgba(0,0,0,0.2), inset 1px 1px 0 rgba(255,255,255,0.5);
+    }
+    .draw-tool-btn:hover { background: #fce8a0; }
+
+    @media (max-width: 768px) {
+      .game-field { padding: 6px 8px 10px; }
+      .progress-text { font-size: 8px; }
+      .tile-header { font-size: 6px; }
+      .tile-question { font-size: 7px; }
+      .example-label, .example-input { font-size: 6px; }
+      .comparison-expr { font-size: 6px; }
+    }
+    @media (max-width: 480px) {
+      .start-title { font-size: 12px; }
+      .start-button { font-size: 10px; }
+    }
+  </style>
+</head>
+<body>
+<div class="app-root" style="width:100%;min-height:100vh;">
+
+  <!-- START SCREEN -->
+  <section class="start-screen" id="startScreen">
+    <div id="butterflyContainer" style="position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:3;"></div>
+    <div class="start-overlay">
+      <div class="start-badge">2 класс • пазл</div>
+      <h1 class="start-title">Комплексный урок<br>3 четверть</h1>
+      <p class="start-subtitle">Реши все задания и собери пазл!</p>
+      <button class="start-button" id="startButton">▶ Играть</button>
+      <div class="start-footer">мобильные устройства, ПК и планшеты</div>
+    </div>
+  </section>
+
+  <!-- GAME SCREEN -->
+  <section class="game-screen" id="gameScreen">
+    <div class="game-wrapper">
+      <div class="top-bar">
+        <div class="progress">
+          <div class="progress-icon">⛏</div>
+          <div class="progress-text" id="progressText">0 / 12</div>
+        </div>
+        <button class="sound-toggle" id="soundToggle" aria-label="Переключить звук">
+          <span class="sound-icon" id="soundIcon">🔊</span>
+        </button>
+      </div>
+      <div class="game-field">
+        <div class="image-area">
+
+          <div class="puzzle-image-wrapper">
+            <div class="tiles-grid" id="tilesGrid"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ERROR OVERLAY -->
+  <div class="overlay" id="errorOverlay">
+    <div class="overlay-card">
+      <div class="overlay-title" id="errorTitle">Ошибка!</div>
+      <div class="overlay-text" id="errorText">Попробуй ещё раз?</div>
+      <button class="overlay-button" id="tryAgainButton">Ещё раз</button>
+    </div>
+  </div>
+
+  <!-- FINAL OVERLAY -->
+  <div class="final-overlay" id="finalOverlay">
+    <div class="final-content">
+      <div class="final-title">Молодец!</div>
+      <div class="final-subtitle">Все задания выполнены! ⛏️🌟</div>
+      <button class="final-button" id="playAgainButton">Играть снова</button>
+    </div>
+  </div>
+
+  <!-- ZOOM OVERLAY -->
+  <div class="zoom-overlay" id="zoomOverlay">
+    <div class="zoom-card" id="zoomCard">
+      <div class="zoom-header">
+        <div class="zoom-title" id="zoomTitle">Задание</div>
+        <button class="zoom-close" id="zoomClose">✕</button>
+      </div>
+      <div class="zoom-question" id="zoomQuestion"></div>
+      <div id="zoomBody"></div>
+      <button class="zoom-button" id="zoomSubmit">Проверить ✓</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  /* ====================================================
+     PUZZLE DATA — 2nd grade, 3rd quarter
+  ==================================================== */
+  const puzzles = [
+    // 1. Вычисления (6 примеров)
+    {
+      type: "examples",
+      question: "Выполни вычисления:",
+      examples: [
+        { label:"86 – 39 =", answer:"47" },
+        { label:"54 + 28 =", answer:"82" },
+        { label:"90–(7+9)=", answer:"74" },
+        { label:"37 + 26 =", answer:"63" },
+        { label:"73 – 45 =", answer:"28" },
+        { label:"36+(31–11)=", answer:"56" },
+      ]
+    },
+    // 2. Заполни окошки
+    {
+      type: "fillboxes",
+      question: "Заполни окошки числами так, чтобы записи были верными:",
+      boxes: [
+        { label:"7 + □ = 5 + 10", answer:"8" },
+        { label:"18 – 9 = □ – 8", answer:"17" },
+        { label:"9 + □ = 3 + 10", answer:"4" },
+        { label:"17 – 8 = □ – 5", answer:"14" },
+      ]
+    },
+    // 3. Задача (почта)
+    {
+      type: "text",
+      question: "Утром на почту привезли 38 посылок. Днём жители забрали 9 посылок, а вечером – ещё 8.\nСколько посылок осталось на почте?",
+      answer: "21",
+      placeholder: "Ответ..."
+    },
+    // 4. Сравни (знаки)
+    {
+      type: "signs",
+      question: "Сравни и поставь знаки < > =",
+      comparisons: [
+        { left:"8 единиц", right:"2 десятка", answer:"<" },
+        { left:"26 + 5",   right:"25 + 6",    answer:"=" },
+        { left:"3 дм",     right:"23 см",      answer:">" },
+        { left:"2 + 59",   right:"2+50+9",     answer:"=" },
+      ]
+    },
+    // 5. Прямоугольник 6×4
+    {
+      type: "draw",
+      question: "Начерти прямоугольник со сторонами 6 см и 4 см.\nНайди его периметр.",
+      answer: "20",
+      placeholder: "Периметр (см)...",
+      rectW: 6, rectH: 4, perimeter: 20
+    },
+    // 6. Вычисления-2
+    {
+      type: "examples",
+      question: "Выполни вычисления:",
+      examples: [
+        { label:"82 – 46 =", answer:"36" },
+        { label:"48 + 27 =", answer:"75" },
+        { label:"62 – 35 =", answer:"27" },
+        { label:"58 + 25 =", answer:"83" },
+        { label:"80–(6+5)=", answer:"69" },
+        { label:"43+(74–64)=", answer:"53" },
+      ]
+    },
+    // 7. Задача (фотоаппарат)
+    {
+      type: "text",
+      question: "У Саши плёнка с 36 кадрами. В понедельник он истратил 9 кадров, а во вторник ещё 7.\nСколько кадров осталось?",
+      answer: "20",
+      placeholder: "Ответ..."
+    },
+    // 8. Сравни-2
+    {
+      type: "signs",
+      question: "Сравни и поставь знаки > < =",
+      comparisons: [
+        { left:"3 десятка",  right:"9 единиц",  answer:">" },
+        { left:"4 дм 5 см",  right:"54 см",      answer:"<" },
+        { left:"38 + 6",     right:"36 + 8",      answer:"=" },
+        { left:"3 + 47",     right:"3+40+7",      answer:"=" },
+      ]
+    },
+    // 9. Прямоугольник 3×5
+    {
+      type: "draw",
+      question: "Начерти прямоугольник со сторонами 3 см и 5 см.\nНайди его периметр.",
+      answer: "16",
+      placeholder: "Периметр (см)...",
+      rectW: 3, rectH: 5, perimeter: 16
+    },
+    // 10. Задача (Лего)
+    {
+      type: "text",
+      question: "У Кати в конструкторе «Лего» 54 детали. Для дома она использовала 30 деталей, а для башни – ещё 8.\nСколько деталей у Кати осталось?",
+      answer: "16",
+      placeholder: "Ответ..."
+    },
+    // 11. Уравнения
+    {
+      type: "equations",
+      question: "Решите уравнения:",
+      equations: [
+        { label:"х + 30 = 76", varName:"х", answer:"46" },
+        { label:"х – 17 = 50", varName:"х", answer:"67" },
+      ]
+    },
+    // 12. Задача (книги)
+    {
+      type: "text",
+      question: "На одной полке 65 книг, на другой на 40 книг меньше, а на третьей столько, сколько на первой и второй вместе.\nСколько книг на третьей полке?",
+      answer: "90",
+      placeholder: "Ответ..."
+    },
+  ];
+
+  const TOTAL_TILES = puzzles.length;
+  const startScreen   = document.getElementById("startScreen");
+  const gameScreen    = document.getElementById("gameScreen");
+  const startButton   = document.getElementById("startButton");
+  const tilesGrid     = document.getElementById("tilesGrid");
+  const progressTextEl= document.getElementById("progressText");
+  const errorOverlay  = document.getElementById("errorOverlay");
+  const errorTitleEl  = document.getElementById("errorTitle");
+  const errorTextEl   = document.getElementById("errorText");
+  const tryAgainButton= document.getElementById("tryAgainButton");
+  const finalOverlay  = document.getElementById("finalOverlay");
+  const playAgainButton= document.getElementById("playAgainButton");
+  const soundToggleBtn = document.getElementById("soundToggle");
+  const soundIconEl   = document.getElementById("soundIcon");
+  const butterflyContainer = document.getElementById("butterflyContainer");
+
+  let soundEnabled = true;
+  let openedTiles = 0;
+  let wrongAttempts = 0;
+  let lastErrorTile = null;
+
+  // Sounds
+  const flipSound  = new Audio("https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg");
+  const errorSound = new Audio("https://actions.google.com/sounds/v1/cartoon/goofy_spring_bounces.ogg");
+  const winSound   = new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg");
+  flipSound.volume = 0.25; errorSound.volume = 0.4; winSound.volume = 0.25;
+
+  function playSound(a) {
+    if (!soundEnabled || !a) return;
+    try { a.currentTime = 0; a.play(); } catch(e) {}
+  }
+  function playErrorSoundLimited() {
+    if (!soundEnabled) return;
+    try {
+      errorSound.currentTime = 0; errorSound.play();
+      setTimeout(() => { try { errorSound.pause(); errorSound.currentTime=0; } catch(e){} }, 2000);
+    } catch(e) {}
+  }
+
+  function updateProgress() { progressTextEl.textContent = `${openedTiles} / ${TOTAL_TILES}`; }
+
+  const puzzleEdges = [
+    { top:"none",  bottom:"tab",   left:"none",  right:"tab"  },
+    { top:"none",  bottom:"blank", left:"blank", right:"tab"  },
+    { top:"none",  bottom:"tab",   left:"blank", right:"tab"  },
+    { top:"none",  bottom:"blank", left:"blank", right:"none" },
+    { top:"blank", bottom:"tab",   left:"none",  right:"tab"  },
+    { top:"tab",   bottom:"blank", left:"blank", right:"tab"  },
+    { top:"blank", bottom:"tab",   left:"blank", right:"tab"  },
+    { top:"tab",   bottom:"blank", left:"blank", right:"none" },
+    { top:"blank", bottom:"none",  left:"none",  right:"tab"  },
+    { top:"tab",   bottom:"none",  left:"blank", right:"tab"  },
+    { top:"blank", bottom:"none",  left:"blank", right:"tab"  },
+    { top:"tab",   bottom:"none",  left:"blank", right:"none" },
+  ];
+
+  // ─── ZOOM ─────────────────────────────────────────────────
+  let zoomActive = false;
+  let zoomTileIndex = null;
+  let zoomInputRef = null;
+  let zoomExampleInputsRef = [];
+  let zoomSignsRef = [];
+  let zoomEquationInputsRef = [];
+
+  const zoomOverlay   = document.getElementById("zoomOverlay");
+  const zoomTitleEl   = document.getElementById("zoomTitle");
+  const zoomQuestionEl= document.getElementById("zoomQuestion");
+  const zoomBodyEl    = document.getElementById("zoomBody");
+  const zoomCloseBtn  = document.getElementById("zoomClose");
+  const zoomSubmitBtn = document.getElementById("zoomSubmit");
+
+  function openZoom(index) {
+    zoomTileIndex = index;
+    zoomActive = true;
+    const puzzle = puzzles[index];
+    zoomTitleEl.textContent = `Задание ${index + 1}`;
+    zoomQuestionEl.textContent = puzzle.question || "";
+    zoomBodyEl.innerHTML = "";
+    zoomInputRef = null;
+    zoomExampleInputsRef = [];
+    zoomSignsRef = [];
+    zoomEquationInputsRef = [];
+
+    if (puzzle.type === "text" || puzzle.type === "draw") {
+      if (puzzle.type === "draw") {
+        buildDrawArea(zoomBodyEl, puzzle, true);
+      }
+      const inp = document.createElement("input");
+      inp.type = "text"; inp.className = "zoom-input";
+      inp.placeholder = puzzle.placeholder || "Ответ...";
+      inp.autocomplete = "off";
+      if (puzzle.type === "draw") {
+        const zoomRow = document.createElement("div");
+        zoomRow.style.cssText = "display:flex;align-items:center;gap:8px;margin-bottom:14px;";
+        const cmLbl = document.createElement("span");
+        cmLbl.textContent = "см";
+        cmLbl.style.cssText = "font-size:16px;color:#3a1800;font-family:var(--font);flex-shrink:0;font-weight:700;";
+        inp.style.marginBottom = "0"; inp.style.flex = "1";
+        zoomRow.appendChild(inp); zoomRow.appendChild(cmLbl);
+        zoomBodyEl.appendChild(zoomRow);
+      } else {
+        zoomBodyEl.appendChild(inp);
+      }
+      zoomInputRef = inp;
+      setTimeout(() => inp.focus(), 60);
+      inp.addEventListener("keydown", e => { if(e.key==="Enter"){e.preventDefault(); zoomSubmitBtn.click();} });
+
+    } else if (puzzle.type === "examples" || puzzle.type === "fillboxes") {
+      const items = puzzle.type === "examples" ? puzzle.examples : puzzle.boxes;
+      const grid = document.createElement("div");
+      grid.className = "zoom-examples-grid";
+      items.forEach((ex) => {
+        const row = document.createElement("div"); row.className = "zoom-example-row";
+        const lbl = document.createElement("span"); lbl.textContent = ex.label;
+        const inp = document.createElement("input");
+        inp.type = "text"; inp.className = "zoom-example-input";
+        inp.maxLength = 5; inp.autocomplete = "off";
+        inp.setAttribute("inputmode","numeric");
+        zoomExampleInputsRef.push({ inp, answer: ex.answer });
+        row.append(lbl, inp);
+        grid.appendChild(row);
+        inp.addEventListener("keydown", e => { if(e.key==="Enter"){e.preventDefault(); zoomSubmitBtn.click();} });
+      });
+      zoomBodyEl.appendChild(grid);
+      setTimeout(() => zoomExampleInputsRef[0]?.inp.focus(), 60);
+
+    } else if (puzzle.type === "signs") {
+      zoomSignsRef = new Array(puzzle.comparisons.length).fill(null);
+      const cgrid = document.createElement("div");
+      cgrid.className = "zoom-comparisons-grid";
+      puzzle.comparisons.forEach((cmp, ci) => {
+        const row = document.createElement("div"); row.className = "zoom-comparison-row";
+        const exL = document.createElement("span"); exL.textContent = cmp.left; exL.style.minWidth="60px";
+        const signs = ["<",">","="];
+        const btnGroup = [];
+        signs.forEach(s => {
+          const sb = document.createElement("button");
+          sb.className = "zoom-sign-btn"; sb.type = "button"; sb.textContent = s;
+          sb.addEventListener("click", () => {
+            btnGroup.forEach(b => b.classList.remove("selected"));
+            sb.classList.add("selected");
+            zoomSignsRef[ci] = s;
+          });
+          btnGroup.push(sb); row.appendChild(sb);
+        });
+        const exR = document.createElement("span"); exR.textContent = cmp.right; exR.style.minWidth="40px";
+        row.prepend(exL); row.append(exR);
+        cgrid.appendChild(row);
+      });
+      zoomBodyEl.appendChild(cgrid);
+
+    } else if (puzzle.type === "equations") {
+      puzzle.equations.forEach((eq) => {
+        const row = document.createElement("div");
+        row.style.cssText = "display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:13px;color:#ddd;";
+        row.innerHTML = `<span style="font-family:var(--font);font-size:11px;">${eq.label}</span>`;
+        const lbl = document.createElement("span");
+        lbl.style.cssText = "font-family:var(--font);font-size:11px;color:var(--mc-gold);";
+        lbl.textContent = `${eq.varName} =`;
+        const inp = document.createElement("input");
+        inp.type = "text"; inp.className = "zoom-example-input";
+        inp.maxLength = 5; inp.autocomplete = "off"; inp.setAttribute("inputmode","numeric");
+        zoomEquationInputsRef.push({ inp, answer: eq.answer });
+        row.append(lbl, inp);
+        zoomBodyEl.appendChild(row);
+        inp.addEventListener("keydown", e => { if(e.key==="Enter"){e.preventDefault(); zoomSubmitBtn.click();} });
+      });
+      setTimeout(() => zoomEquationInputsRef[0]?.inp.focus(), 60);
+    }
+
+    zoomOverlay.classList.add("visible");
+  }
+
+  function closeZoom() {
+    zoomActive = false; zoomTileIndex = null;
+    zoomOverlay.classList.remove("visible");
+  }
+
+  zoomCloseBtn.addEventListener("click", closeZoom);
+  zoomOverlay.addEventListener("click", e => { if(e.target === zoomOverlay) closeZoom(); });
+
+  zoomSubmitBtn.addEventListener("click", () => {
+    if (zoomTileIndex === null) return;
+    const puzzle = puzzles[zoomTileIndex];
+    const tile = tilesGrid.querySelector(`.puzzle-tile[data-index="${zoomTileIndex}"]`);
+    if (!tile) return;
+    spawnMcParticles(zoomSubmitBtn);
+
+    if (puzzle.type === "text" || puzzle.type === "draw") {
+      const val = zoomInputRef ? zoomInputRef.value : "";
+      if (!val.trim()) return;
+      if (checkAnswer(zoomTileIndex, val)) { closeZoom(); markCorrect(tile, zoomTileIndex); }
+      else markWrong(tile, zoomTileIndex);
+
+    } else if (puzzle.type === "examples" || puzzle.type === "fillboxes") {
+      let allOk = true;
+      zoomExampleInputsRef.forEach(({inp, answer}) => {
+        if (normalizeAnswer(inp.value) === normalizeAnswer(answer)) inp.classList.add("correct");
+        else allOk = false;
+      });
+      if (allOk) { closeZoom(); markCorrect(tile, zoomTileIndex); }
+      else markWrong(tile, zoomTileIndex);
+
+    } else if (puzzle.type === "signs") {
+      const allOk = puzzle.comparisons.every((cmp, ci) => zoomSignsRef[ci] === cmp.answer);
+      if (allOk) { closeZoom(); markCorrect(tile, zoomTileIndex); }
+      else markWrong(tile, zoomTileIndex);
+
+    } else if (puzzle.type === "equations") {
+      let allOk = true;
+      zoomEquationInputsRef.forEach(({inp, answer}) => {
+        if (normalizeAnswer(inp.value) === normalizeAnswer(answer)) inp.classList.add("correct");
+        else allOk = false;
+      });
+      if (allOk) { closeZoom(); markCorrect(tile, zoomTileIndex); }
+      else markWrong(tile, zoomTileIndex);
+    }
+  });
+
+  // ─── BUILD DRAW AREA ──────────────────────────────────────
+  function buildDrawArea(container, puzzle, large) {
+    const h = large ? 160 : 80;
+    const canvas = document.createElement("canvas");
+    canvas.width = large ? 520 : 200;
+    canvas.height = h;
+    canvas.className = large ? "zoom-draw-area" : "draw-area";
+    container.appendChild(canvas);
+
+    // Draw grid
+    const ctx = canvas.getContext("2d");
+    const SCALE = large ? 20 : 10; // px per cm
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    // grid
+    ctx.strokeStyle = "#ddd";
+    ctx.lineWidth = 0.5;
+    for (let x = 0; x <= canvas.width; x += SCALE) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,canvas.height); ctx.stroke(); }
+    for (let y = 0; y <= canvas.height; y += SCALE) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(canvas.width,y); ctx.stroke(); }
+
+    // Drawing
+    let drawing = false;
+    let lastX = 0, lastY = 0;
+    ctx.strokeStyle = "#222"; ctx.lineWidth = large ? 2 : 1.5; ctx.lineCap = "round";
+
+    canvas.addEventListener("mousedown", e => {
+      drawing = true;
+      const r = canvas.getBoundingClientRect();
+      lastX = (e.clientX - r.left) * (canvas.width / r.width);
+      lastY = (e.clientY - r.top) * (canvas.height / r.height);
+    });
+    canvas.addEventListener("mousemove", e => {
+      if (!drawing) return;
+      const r = canvas.getBoundingClientRect();
+      const x = (e.clientX - r.left) * (canvas.width / r.width);
+      const y = (e.clientY - r.top) * (canvas.height / r.height);
+      ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(x, y); ctx.stroke();
+      lastX = x; lastY = y;
+    });
+    canvas.addEventListener("mouseup",   () => drawing = false);
+    canvas.addEventListener("mouseleave",() => drawing = false);
+    canvas.addEventListener("touchstart", e => {
+      e.preventDefault(); drawing = true;
+      const t = e.touches[0];
+      const r = canvas.getBoundingClientRect();
+      lastX = (t.clientX - r.left) * (canvas.width / r.width);
+      lastY = (t.clientY - r.top) * (canvas.height / r.height);
+    });
+    canvas.addEventListener("touchmove", e => {
+      e.preventDefault(); if (!drawing) return;
+      const t = e.touches[0];
+      const r = canvas.getBoundingClientRect();
+      const x = (t.clientX - r.left) * (canvas.width / r.width);
+      const y = (t.clientY - r.top) * (canvas.height / r.height);
+      ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(x, y); ctx.stroke();
+      lastX = x; lastY = y;
+    });
+    canvas.addEventListener("touchend", () => drawing = false);
+
+    // Clear button
+    const clrBtn = document.createElement("button");
+    clrBtn.className = "draw-tool-btn";
+    clrBtn.style.marginBottom = "8px";
+    clrBtn.textContent = "Очистить";
+    clrBtn.addEventListener("click", () => {
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      ctx.strokeStyle = "#ddd"; ctx.lineWidth = 0.5;
+      for (let x = 0; x <= canvas.width; x += SCALE) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,canvas.height); ctx.stroke(); }
+      for (let y = 0; y <= canvas.height; y += SCALE) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(canvas.width,y); ctx.stroke(); }
+      ctx.strokeStyle = "#222"; ctx.lineWidth = large ? 2 : 1.5;
+    });
+    container.appendChild(clrBtn);
+  }
+
+  // ─── CREATE TILES ─────────────────────────────────────────
+  function createTiles() {
+    tilesGrid.innerHTML = "";
+    puzzles.forEach((puzzle, index) => {
+      const tile = document.createElement("div");
+      tile.className = "puzzle-tile";
+      tile.dataset.index = String(index);
+
+      const inner = document.createElement("div");
+      inner.className = "puzzle-tile-inner";
+
+      // Header (всегда сверху, вне скролла)
+      const topRow = document.createElement("div"); topRow.className = "tile-top-row";
+      const header = document.createElement("div"); header.className = "tile-header";
+      header.textContent = `Задание ${index + 1}`;
+      const zoomBtn = document.createElement("button"); zoomBtn.className = "tile-zoom-btn";
+      zoomBtn.type = "button"; zoomBtn.title = "Увеличить"; zoomBtn.textContent = "⛶";
+      zoomBtn.addEventListener("click", e => { e.stopPropagation(); openZoom(index); });
+      topRow.appendChild(header); topRow.appendChild(zoomBtn);
+      inner.appendChild(topRow);
+
+      // Scrollable content area
+      const scroll = document.createElement("div"); scroll.className = "tile-scroll-area";
+
+      // Question
+      const q = document.createElement("div"); q.className = "tile-question";
+      q.style.whiteSpace = "pre-wrap";
+      q.textContent = puzzle.question;
+      scroll.appendChild(q);
+
+      // ── text / draw ──
+      if (puzzle.type === "text" || puzzle.type === "draw") {
+        if (puzzle.type === "draw") buildDrawArea(scroll, puzzle, false);
+        const input = document.createElement("input");
+        input.type = "text"; input.className = "tile-input";
+        input.placeholder = puzzle.placeholder || "Ответ...";
+        input.autocomplete = "off";
+        if (puzzle.type === "draw") {
+          // Для заданий с чертежом добавляем «см» рядом с полем
+          const inputRow = document.createElement("div");
+          inputRow.style.cssText = "display:flex;align-items:center;gap:4px;margin-bottom:3px;";
+          const cmLabel = document.createElement("span");
+          cmLabel.textContent = "см";
+          cmLabel.style.cssText = "font-size:7px;color:#3a1800;font-family:var(--font);flex-shrink:0;font-weight:700;";
+          input.style.marginBottom = "0";
+          input.style.flex = "1";
+          inputRow.appendChild(input);
+          inputRow.appendChild(cmLabel);
+          scroll.appendChild(inputRow);
+        } else {
+          scroll.appendChild(input);
+        }
+        inner.appendChild(scroll);
+        const btn = document.createElement("button");
+        btn.className = "tile-button"; btn.textContent = "✓";
+        inner.appendChild(btn);
+        tile.appendChild(inner); tilesGrid.appendChild(tile);
+        function checkText() {
+          const val = input.value;
+          if (!val.trim()) return;
+          if (checkAnswer(index, val)) markCorrect(tile, index);
+          else markWrong(tile, index);
+        }
+        btn.addEventListener("click", () => { spawnMcParticles(btn); checkText(); });
+        input.addEventListener("keydown", e => { if(e.key==="Enter"){e.preventDefault(); checkText();} });
+
+      // ── examples / fillboxes ──
+      } else if (puzzle.type === "examples" || puzzle.type === "fillboxes") {
+        const items = puzzle.type === "examples" ? puzzle.examples : puzzle.boxes;
+        const grid = document.createElement("div"); grid.className = "examples-grid";
+        const inputs = [];
+        items.forEach(ex => {
+          const row = document.createElement("div"); row.className = "example-row";
+          const lbl = document.createElement("span"); lbl.className = "example-label"; lbl.textContent = ex.label;
+          const inp = document.createElement("input"); inp.type = "text"; inp.className = "example-input";
+          inp.maxLength = 5; inp.autocomplete = "off"; inp.setAttribute("inputmode","numeric");
+          inputs.push({ inp, answer: ex.answer });
+          row.append(lbl, inp); grid.appendChild(row);
+        });
+        scroll.appendChild(grid);
+        inner.appendChild(scroll);
+        const btn = document.createElement("button"); btn.className = "tile-button"; btn.textContent = "✓";
+        inner.appendChild(btn);
+        tile.appendChild(inner); tilesGrid.appendChild(tile);
+        function checkEx() {
+          let allOk = true;
+          inputs.forEach(({inp, answer}) => {
+            if (normalizeAnswer(inp.value) === normalizeAnswer(answer)) inp.classList.add("correct");
+            else allOk = false;
+          });
+          if (allOk) markCorrect(tile, index);
+          else markWrong(tile, index);
+        }
+        btn.addEventListener("click", () => { spawnMcParticles(btn); checkEx(); });
+        inputs.forEach(({inp}) => inp.addEventListener("keydown", e => { if(e.key==="Enter"){e.preventDefault(); checkEx();} }));
+
+      // ── signs ──
+      } else if (puzzle.type === "signs") {
+        const cgrid = document.createElement("div"); cgrid.className = "comparisons-grid";
+        const selectedSigns = new Array(puzzle.comparisons.length).fill(null);
+        puzzle.comparisons.forEach((cmp, ci) => {
+          const row = document.createElement("div"); row.className = "comparison-row";
+          const exL = document.createElement("span"); exL.className = "comparison-expr"; exL.textContent = cmp.left + " ";
+          const signs = ["<",">","="];
+          const btnGroup = [];
+          signs.forEach(s => {
+            const sb = document.createElement("button"); sb.className = "sign-btn"; sb.type = "button"; sb.textContent = s;
+            sb.addEventListener("click", () => { btnGroup.forEach(b => b.classList.remove("selected")); sb.classList.add("selected"); selectedSigns[ci] = s; });
+            btnGroup.push(sb); row.appendChild(sb);
+          });
+          const exR = document.createElement("span"); exR.className = "comparison-expr"; exR.textContent = " " + cmp.right;
+          row.prepend(exL); row.append(exR); cgrid.appendChild(row);
+        });
+        scroll.appendChild(cgrid);
+        inner.appendChild(scroll);
+        const btn = document.createElement("button"); btn.className = "tile-button"; btn.textContent = "✓";
+        inner.appendChild(btn);
+        tile.appendChild(inner); tilesGrid.appendChild(tile);
+        function checkSigns() {
+          let allOk = true;
+          puzzle.comparisons.forEach((cmp, ci) => {
+            if (selectedSigns[ci] !== cmp.answer) allOk = false;
+            else { const rows = cgrid.querySelectorAll(".comparison-row"); const btns = rows[ci].querySelectorAll(".sign-btn"); btns.forEach(b => { if(b.textContent===cmp.answer) b.classList.add("correct"); }); }
+          });
+          if (allOk) markCorrect(tile, index);
+          else markWrong(tile, index);
+        }
+        btn.addEventListener("click", () => { spawnMcParticles(btn); checkSigns(); });
+
+      // ── equations ──
+      } else if (puzzle.type === "equations") {
+        const eqWrap = document.createElement("div");
+        eqWrap.style.cssText = "display:flex;flex-direction:column;gap:4px;";
+        const inputs2 = [];
+        puzzle.equations.forEach(eq => {
+          const row = document.createElement("div");
+          row.style.cssText = "display:flex;align-items:center;gap:4px;";
+          const lbl = document.createElement("span");
+          lbl.style.cssText = "font-size:6px;color:#3a1800;flex-shrink:0;font-family:var(--font);";
+          lbl.textContent = eq.label;
+          const lbl2 = document.createElement("span");
+          lbl2.style.cssText = "font-size:6px;color:#8B4513;flex-shrink:0;font-family:var(--font);";
+          lbl2.textContent = `${eq.varName}=`;
+          const inp = document.createElement("input"); inp.type = "text"; inp.className = "example-input";
+          inp.maxLength = 5; inp.autocomplete = "off"; inp.setAttribute("inputmode","numeric");
+          inputs2.push({ inp, answer: eq.answer });
+          row.append(lbl, lbl2, inp);
+          eqWrap.appendChild(row);
+        });
+        scroll.appendChild(eqWrap);
+        inner.appendChild(scroll);
+        const btn = document.createElement("button"); btn.className = "tile-button"; btn.textContent = "✓";
+        inner.appendChild(btn);
+        tile.appendChild(inner); tilesGrid.appendChild(tile);
+        function checkEq() {
+          let allOk = true;
+          inputs2.forEach(({inp, answer}) => {
+            if (normalizeAnswer(inp.value) === normalizeAnswer(answer)) inp.classList.add("correct");
+            else allOk = false;
+          });
+          if (allOk) markCorrect(tile, index);
+          else markWrong(tile, index);
+        }
+        btn.addEventListener("click", () => { spawnMcParticles(btn); checkEq(); });
+        inputs2.forEach(({inp}) => inp.addEventListener("keydown", e => { if(e.key==="Enter"){e.preventDefault(); checkEq();} }));
+      }
+    });
+  }
+
+  // ─── CORRECT / WRONG ──────────────────────────────────────
+  function markCorrect(tile, index) {
+    spawnTileWow(tile);
+    tile.classList.add("flipping");
+    spawnMcBoom(tile);
+    playSound(flipSound);
+    setTimeout(() => { tile.classList.add("disabled"); tile.style.pointerEvents="none"; }, 380);
+    openedTiles++;
+    updateProgress();
+    popProgress();
+    if (openedTiles >= TOTAL_TILES) setTimeout(showFinalScreen, 600);
+    if (zoomActive && zoomTileIndex === index) closeZoom();
+  }
+  function markWrong(tile, index) {
+    wrongAttempts++;
+    tile.classList.remove("wiggle"); void tile.offsetWidth; tile.classList.add("wiggle");
+    lastErrorTile = tile;
+    playErrorSoundLimited();
+    if (wrongAttempts >= 3) showGameOver();
+    else showErrorOverlay();
+  }
+
+  function normalizeAnswer(v) {
+    return v.toString().trim().toLowerCase().replace(/\s+/g," ").replace(/\s*,\s*/g,",").replace(/\s+см$/,"см");
+  }
+  function checkAnswer(index, value) {
+    const puzzle = puzzles[index];
+    if (!puzzle.answer) return false;
+    const norm = s => s.toString().trim().toLowerCase().replace(/\s+/g," ").replace(/\s*,\s*/g,",").replace(/\s+см$/,"см");
+    const correct = norm(puzzle.answer);
+    const given   = norm(value);
+    if (given === correct) return true;
+    // эталон с «см», ученик написал без
+    if (correct.endsWith("см") && given === correct.replace(/\s*см$/, "").trim()) return true;
+    // эталон без «см», ученик написал с «см» (задания 5 и 9)
+    if (!correct.endsWith("см") && given.replace(/\s*см$/, "").trim() === correct) return true;
+    return false;
+  }
+
+  function showErrorOverlay() {
+    errorTitleEl.textContent = "Ошибка!";
+    errorTextEl.textContent  = "Попробуй ещё раз?";
+    tryAgainButton.textContent = "Ещё раз";
+    errorOverlay.classList.add("visible");
+  }
+  function hideErrorOverlay() { errorOverlay.classList.remove("visible"); }
+  function showGameOver() {
+    errorTitleEl.textContent = "3 ошибки!";
+    errorTextEl.textContent  = "Начнём сначала?";
+    tryAgainButton.textContent = "Начать заново";
+    errorOverlay.classList.add("visible");
+  }
+  function restartGameFromOverlay() { errorOverlay.classList.remove("visible"); restartGame(); }
+  function showFinalScreen() {
+    finalOverlay.classList.add("visible");
+    spawnRainbow();
+    spawnHearts();
+    setTimeout(spawnHearts, 1800);
+    spawnConfetti();
+    setTimeout(spawnConfetti, 1200);
+    playSound(winSound);
+  }
+  function hideFinalScreen() { finalOverlay.classList.remove("visible"); }
+  function restartGame() {
+    hideFinalScreen();
+    openedTiles = 0; wrongAttempts = 0; lastErrorTile = null;
+    updateProgress(); createTiles();
+  }
+
+  // ─── ВАУ: HONEY DRIP ─────────────────────────────────────
+  function initHoneyDrip() {
+    const wrap = document.getElementById("honeyDripWrap");
+    if (!wrap) return;
+    const positions = [3,9,16,23,30,37,44,51,58,65,72,79,86,92];
+    positions.forEach((pct, i) => {
+      const d = document.createElement("div");
+      d.className = "honey-drop";
+      d.style.left = pct + "%";
+      d.style.width = (7 + Math.random() * 5) + "px";
+      d.style.setProperty("--dur", (1.8 + Math.random() * 1.6) + "s");
+      d.style.setProperty("--delay", (i * 0.22 + Math.random() * 0.4) + "s");
+      wrap.appendChild(d);
+    });
+  }
+
+  // ─── ВАУ: ВСПЫШКА + КОЛЬЦО при правильном ответе ────────
+  function spawnTileWow(tileEl) {
+    const flash = document.createElement("div");
+    flash.className = "tile-flash";
+    tileEl.appendChild(flash);
+    setTimeout(() => flash.remove(), 550);
+
+    const ring = document.createElement("div");
+    ring.className = "tile-ring";
+    tileEl.appendChild(ring);
+    setTimeout(() => ring.remove(), 600);
+  }
+
+  // ─── ВАУ: ПРОГРЕСС ПОДПРЫГИВАЕТ ─────────────────────────
+  function popProgress() {
+    const el = document.getElementById("progressText");
+    el.classList.remove("progress-pop");
+    void el.offsetWidth;
+    el.classList.add("progress-pop");
+    setTimeout(() => el.classList.remove("progress-pop"), 450);
+  }
+
+  // ─── ВАУ: КОНФЕТТИ из медовых цветов ────────────────────
+  const CONF_COLORS = ["#f5c800","#f5a623","#fff176","#c8860a","#ffd54f","#ffffff","#ffe082","#ffb300"];
+  function spawnConfetti() {
+    for (let i = 0; i < 130; i++) {
+      setTimeout(() => {
+        const c = document.createElement("div");
+        c.className = "confetti";
+        const w = 7 + Math.random() * 9;
+        const isSquare = Math.random() > 0.4;
+        c.style.setProperty("--cw", w + "px");
+        c.style.setProperty("--ch", isSquare ? w + "px" : (w * 1.6) + "px");
+        c.style.setProperty("--cc", CONF_COLORS[Math.floor(Math.random() * CONF_COLORS.length)]);
+        c.style.setProperty("--cr", isSquare ? "2px" : "50%");
+        c.style.setProperty("--cd", (1.6 + Math.random() * 2.2) + "s");
+        c.style.setProperty("--cdelay", "0s");
+        c.style.setProperty("--crot", (Math.random() > 0.5 ? "" : "-") + (300 + Math.random() * 400) + "deg");
+        c.style.setProperty("--cx", (Math.random() - 0.5) * 220 + "px");
+        c.style.left = (Math.random() * 100) + "vw";
+        document.body.appendChild(c);
+        setTimeout(() => c.remove(), 4000);
+      }, i * 22);
+    }
+  }
+
+  // ─── PARTICLES ────────────────────────────────────────────
+  const MC_COLORS = ["#f5c800","#f5a623","#fff176","#c8860a","#ffffff","#fffde7","#ffd54f"];
+  function spawnMcParticles(btnEl) {
+    const rect = btnEl.getBoundingClientRect();
+    const cx = rect.left + rect.width/2, cy = rect.top + rect.height/2;
+    for (let i = 0; i < 10; i++) {
+      const p = document.createElement("div"); p.className = "mc-particle";
+      const angle = (i/10)*Math.PI*2 + (Math.random()-0.5)*0.8;
+      const dist = 30 + Math.random()*40;
+      p.style.left = cx + "px"; p.style.top = cy + "px";
+      p.style.background = MC_COLORS[Math.floor(Math.random()*MC_COLORS.length)];
+      p.style.setProperty("--px", Math.cos(angle)*dist+"px");
+      p.style.setProperty("--py", Math.sin(angle)*dist+"px");
+      p.style.setProperty("--dur", (0.4+Math.random()*0.4)+"s");
+      p.style.animationDelay = (Math.random()*0.1)+"s";
+      document.body.appendChild(p);
+      setTimeout(() => { if(p.parentNode) p.parentNode.removeChild(p); }, 800);
+    }
+  }
+  const MC_BOOM_EMOJIS = ["🐝","🍯","⭐","✨","🌸","💛","🌼"];
+  function spawnMcBoom(tileEl) {
+    const rect = tileEl.getBoundingClientRect();
+    const cx = rect.left + rect.width/2, cy = rect.top + rect.height/2;
+    for (let i = 0; i < 4; i++) {
+      const f = document.createElement("span"); f.className = "mc-boom";
+      f.textContent = MC_BOOM_EMOJIS[Math.floor(Math.random()*MC_BOOM_EMOJIS.length)];
+      f.style.left = (cx + (Math.random()-0.5)*60)+"px";
+      f.style.top  = (cy + (Math.random()-0.5)*40)+"px";
+      f.style.position = "fixed"; f.style.pointerEvents = "none"; f.style.zIndex = "200";
+      f.style.animationDelay = (i*0.12)+"s";
+      document.body.appendChild(f);
+      setTimeout(() => { if(f.parentNode) f.parentNode.removeChild(f); }, 1200);
+    }
+  }
+
+  function spawnRainbow() {
+    const fo = document.getElementById("finalOverlay");
+    const colors = ["#ff4444","#ff8800","#fcdb58","#17dd62","#5decf5","#8888ff"];
+    for (let i = 0; i < 6; i++) {
+      const arc = document.createElement("div"); arc.className = "rainbow-arc";
+      const s = 80 + i*50;
+      arc.style.cssText = `width:${s}px;height:${s}px;background:${colors[i]};left:50%;top:50%;margin-left:${-s/2}px;margin-top:${-s/2}px;animation-delay:${i*0.15}s;`;
+      fo.appendChild(arc);
+      setTimeout(() => { if(arc.parentNode) arc.parentNode.removeChild(arc); }, 3000);
+    }
+  }
+  function spawnHearts() {
+    const fo = document.getElementById("finalOverlay");
+    const ICONS = ["🐝","🍯","⭐","🌟","✨","🌸","🏆"];
+    for (let wave=0; wave<3; wave++) {
+      setTimeout(() => {
+        for (let i=0; i<14; i++) {
+          const h = document.createElement("span"); h.className = "heart-fw";
+          const angle = (i/14)*Math.PI*2;
+          const dist = 80 + Math.random()*140;
+          h.textContent = ICONS[Math.floor(Math.random()*ICONS.length)];
+          h.style.left  = (20+Math.random()*60)+"%";
+          h.style.top   = (20+Math.random()*50)+"%";
+          h.style.position = "absolute"; h.style.pointerEvents = "none";
+          h.style.setProperty("--hx", Math.cos(angle)*dist+"px");
+          h.style.setProperty("--hy", Math.sin(angle)*dist+"px");
+          h.style.setProperty("--dur", (700+Math.random()*600)+"ms");
+          fo.appendChild(h);
+          setTimeout(() => { if(h.parentNode) fo.removeChild(h); }, 1500);
+        }
+      }, wave*500);
+    }
+  }
+
+  // ─── ПЧЁЛЫ (SVG Minecraft-style из index.html) ──────────────
+  function makeMCBee(scale) {
+    const ns = "http://www.w3.org/2000/svg";
+    const wrap = document.createElement("div");
+    wrap.className = "butterfly-wrap";
+
+    const svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("width",  String(Math.round(48 * scale)));
+    svg.setAttribute("height", String(Math.round(48 * scale)));
+    svg.setAttribute("viewBox", "0 0 32 32");
+
+    function el(tag, attrs) {
+      const e = document.createElementNS(ns, tag);
+      for (const [k,v] of Object.entries(attrs)) e.setAttribute(k, v);
+      return e;
+    }
+
+    // Body
+    const body    = el("rect", { x:"8",  y:"14", width:"16", height:"10", fill:"#FFD700" });
+    const stripe1 = el("rect", { x:"12", y:"14", width:"2",  height:"10", fill:"#222" });
+    const stripe2 = el("rect", { x:"18", y:"14", width:"2",  height:"10", fill:"#222" });
+    const face    = el("rect", { x:"8",  y:"14", width:"2",  height:"10", fill:"#555" });
+    const eye     = el("rect", { x:"8",  y:"16", width:"2",  height:"2",  fill:"#000" });
+
+    // Wings
+    const wL = el("rect", { x:"12", y:"6",  width:"6",  height:"8",  fill:"rgba(255,255,255,0.8)", class:"bf-wing-l" });
+    const wR = el("rect", { x:"16", y:"4",  width:"6",  height:"10", fill:"rgba(255,255,255,0.6)", class:"bf-wing-r" });
+
+    svg.append(wR, body, stripe1, stripe2, face, eye, wL);
+    wrap.appendChild(svg);
+    return wrap;
+  }
+
+  function launchMob() {
+    const scale = 1 + Math.random() * 0.8;
+    const wrap  = makeMCBee(scale);
+
+    const startY   = 10 + Math.random() * 60;
+    const totalPx  = window.innerWidth + 200;
+    const speed    = 60 + Math.random() * 50;
+    const duration = (totalPx / speed) * 1000;
+    const ampY     = 20 + Math.random() * 40;
+    const freq     = 0.5 + Math.random() * 1;
+
+    wrap.style.left = "-110px";
+    wrap.style.top  = startY + "vh";
+    butterflyContainer.appendChild(wrap);
+
+    let start = null;
+    function step(ts) {
+      if (!start) start = ts;
+      const elapsed  = ts - start;
+      const progress = elapsed / duration;
+      if (progress >= 1) {
+        if (wrap.parentNode) wrap.parentNode.removeChild(wrap);
+        return;
+      }
+      const x    = -110 + progress * totalPx;
+      const y    = Math.sin(progress * Math.PI * 2 * freq) * ampY;
+      const tilt = Math.cos(progress * Math.PI * 2 * freq) * 10;
+      wrap.style.transform = `translate(${x}px, ${y}px) rotate(${tilt}deg)`;
+      requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function startMobs() {
+    for (let i = 0; i < 4; i++) setTimeout(launchMob, i * 1800);
+    setInterval(launchMob, 4500);
+  }
+
+  // ─── EVENTS ───────────────────────────────────────────────
+  startMobs();
+
+  startButton.addEventListener("click", () => {
+    startScreen.style.display = "none";
+    gameScreen.style.display  = "flex";
+    openedTiles = 0; wrongAttempts = 0;
+    updateProgress(); createTiles();
+    // initHoneyDrip(); // отключено
+  });
+  tryAgainButton.addEventListener("click", () => {
+    if (wrongAttempts >= 3) restartGameFromOverlay();
+    else hideErrorOverlay();
+  });
+  errorOverlay.addEventListener("click", e => {
+    if (e.target === errorOverlay) {
+      if (wrongAttempts >= 3) restartGameFromOverlay();
+      else hideErrorOverlay();
+    }
+  });
+  playAgainButton.addEventListener("click", restartGame);
+  soundToggleBtn.addEventListener("click", () => {
+    soundEnabled = !soundEnabled;
+    soundIconEl.textContent = soundEnabled ? "🔊" : "🔈";
+  });
+
+  (function() { const mark="cmFkaWF0ZWFjaGVy"; const check=mark.split('').reduce((a,b)=>a+b.charCodeAt(0),0); })();
+</script>
+</body>
+</html>
